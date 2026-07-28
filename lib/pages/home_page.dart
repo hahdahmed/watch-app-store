@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:watch_app/models/watchcardmodel.dart';
 import 'package:watch_app/pages/detailedprodect.dart';
 import 'package:watch_app/widgets/CustomCard.dart';
+import 'package:provider/provider.dart';
+import 'package:watch_app/providers/watch_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,7 +19,18 @@ List<String> WatchesType = ["Smart watch", "Casio", "Tissot", "Seiko"];
 
 class _HomePageState extends State<HomePage> {
   @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      Provider.of<WatchProvider>(context, listen: false).getWatches();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<WatchProvider>(context);
+
     return Scaffold(
       appBar: AppBarWidget(),
 
@@ -83,39 +95,41 @@ class _HomePageState extends State<HomePage> {
           ),
 
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.90,
-                ),
-                itemCount: watchItem.length,
-                itemBuilder: (context, index) {
-                  final item = watchItem[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (c) => Detailedprodect(
-                            image: item.image,
-                            title: item.title,
-                            price: item.price,
+            child: provider.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : provider.errorMessage != null
+                ? Center(child: Text(provider.errorMessage!))
+                : Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.90,
                           ),
-                        ),
-                      );
-                    },
-                    child: Customcard(
-                      image: item.image,
-                      title: item.title,
-                      brand: item.subtitle,
-                      price: item.price,
+                      itemCount: provider.watches.length,
+                      itemBuilder: (context, index) {
+                        final item = provider.watches[index];
+
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => Detailedprodect(watch: item),
+                              ),
+                            );
+                          },
+                          child: Customcard(
+                            image: item.thumbnail,
+                            title: item.title,
+                            brand: item.brand,
+                            price: "\$${item.price}",
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-            ),
+                  ),
           ),
         ],
       ),
@@ -172,3 +186,44 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
+
+
+
+
+
+          // Expanded(
+          //   child: Padding(
+          //     padding: const EdgeInsets.all(8.0),
+          //     child: GridView.builder(
+          //       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          //         crossAxisCount: 2,
+          //         childAspectRatio: 0.90,
+          //       ),
+          //       itemCount: watchItem.length,
+          //       itemBuilder: (context, index) {
+          //         final item = watchItem[index];
+          //         return GestureDetector(
+          //           onTap: () {
+          //             Navigator.push(
+          //               context,
+          //               MaterialPageRoute(
+          //                 builder: (c) => Detailedprodect(
+          //                   image: item.image,
+          //                   title: item.title,
+          //                   price: item.price,
+          //                 ),
+          //               ),
+          //             );
+          //           },
+          //           child: Customcard(
+          //             image: item.image,
+          //             title: item.title,
+          //             brand: item.subtitle,
+          //             price: item.price,
+          //           ),
+          //         );
+          //       },
+          //     ),
+          //   ),
+          // ),
+        

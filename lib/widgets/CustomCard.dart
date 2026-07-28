@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Customcard extends StatelessWidget {
+class Customcard extends StatefulWidget {
   const Customcard({
     super.key,
     required this.image,
@@ -17,6 +17,11 @@ class Customcard extends StatelessWidget {
   final String price;
 
   @override
+  State<Customcard> createState() => _CustomcardState();
+}
+
+class _CustomcardState extends State<Customcard> {
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 250.h,
@@ -30,11 +35,18 @@ class Customcard extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Image.asset(image, height: 50.h),
+                child: Image.network(
+                  widget.image,
+                  height: 50.h,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(Icons.image_not_supported);
+                  },
+                ),
               ),
               // SizedBox(height: 2.h),
               Text(
-                title,
+                widget.title,
                 style: GoogleFonts.inter(
                   textStyle: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -44,7 +56,7 @@ class Customcard extends StatelessWidget {
               ),
               SizedBox(height: 2.h),
               Text(
-                brand,
+                widget.brand,
                 style: GoogleFonts.inter(
                   textStyle: TextStyle(
                     fontWeight: FontWeight.normal,
@@ -55,7 +67,7 @@ class Customcard extends StatelessWidget {
               ),
               SizedBox(height: 4.h),
               Text(
-                price,
+                widget.price,
                 style: GoogleFonts.inter(
                   textStyle: TextStyle(
                     fontWeight: FontWeight.w700,

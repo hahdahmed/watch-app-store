@@ -2,18 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:watch_app/widgets/customcontainercolor.dart';
+import 'package:watch_app/models/watchcardmodel.dart';
 
 class Detailedprodect extends StatefulWidget {
-  const Detailedprodect({
-    super.key,
-    required this.image,
-    required this.title,
-    required this.price,
-  });
+  const Detailedprodect({super.key, required this.watch});
 
-  final String image;
-  final String title;
-  final String price;
+  final Watchcardmodel watch;
 
   @override
   State<Detailedprodect> createState() => _DetailedprodectState();
@@ -74,7 +68,9 @@ class _DetailedprodectState extends State<Detailedprodect> {
                         padding: const EdgeInsets.only(right: 100),
 
                         child: Text(
-                          widget.title,
+                          widget.watch.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.poppins(
                             textStyle: TextStyle(
                               fontSize: 20,
@@ -85,33 +81,66 @@ class _DetailedprodectState extends State<Detailedprodect> {
                       ),
                       SizedBox(height: 8.h),
 
-                      Row(
-                        children: [
-                          Padding(padding: const EdgeInsets.only(left: 50)),
-                          // SizedBox(width: 15.w),
-                          Text(
-                            "(With Solo Loop)",
-                            style: GoogleFonts.poppins(
-                              textStyle: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.normal,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                widget.watch.brand,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                          ),
 
-                          SizedBox(width: 120.w),
-                          Text(
-                            "\$${widget.price}",
-                            style: GoogleFonts.poppins(
-                              textStyle: TextStyle(
+                            SizedBox(width: 10.w),
+
+                            Text(
+                              "\$${widget.watch.price}",
+                              style: GoogleFonts.poppins(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xffF24E1E),
+                                color: const Color(0xffF24E1E),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
+
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                      //   child: Row(
+                      //     children: [
+                      //       Padding(padding: const EdgeInsets.only(left: 50)),
+                      //       // SizedBox(width: 15.w),
+                      //       Text(
+                      //         widget.watch.brand,
+                      //         style: GoogleFonts.poppins(
+                      //           textStyle: TextStyle(
+                      //             fontSize: 15,
+                      //             fontWeight: FontWeight.normal,
+                      //           ),
+                      //         ),
+                      //       ),
+
+                      //       SizedBox(width: 120.w),
+                      //       Text(
+                      //         "\$${widget.watch.price}",
+                      //         style: GoogleFonts.poppins(
+                      //           textStyle: TextStyle(
+                      //             fontSize: 22,
+                      //             fontWeight: FontWeight.bold,
+                      //             color: Color(0xffF24E1E),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                       SizedBox(height: 10.h),
 
                       Padding(
@@ -167,7 +196,9 @@ class _DetailedprodectState extends State<Detailedprodect> {
                       ),
 
                       Text(
-                        "Apple Watch Ultra 2 integrates L1 and L5 GPS into an\nantenna d esign that provides greater range with\nincredible power efficiency. It combines data from both ... ",
+                        widget.watch.description,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.poppins(
                           textStyle: TextStyle(
                             fontSize: 11,
@@ -202,7 +233,24 @@ class _DetailedprodectState extends State<Detailedprodect> {
                 ),
               );
             },
-            child: Image.asset(widget.image, width: 300.h),
+            child: SizedBox(
+              height: 280.h,
+              child: Image.network(
+                widget.watch.thumbnail,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.image_not_supported, size: 120);
+                },
+              ),
+            ),
+            // Image.network(
+            //   widget.watch.thumbnail,
+            //   width: 300.w,
+            //   fit: BoxFit.contain,
+            //   errorBuilder: (context, error, stackTrace) {
+            //     return const Icon(Icons.image_not_supported, size: 120);
+            //   },
+            // ),
           ),
 
           ColoredContainer(),

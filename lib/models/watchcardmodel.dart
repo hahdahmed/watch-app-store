@@ -1,60 +1,34 @@
 class Watchcardmodel {
-  final String image;
+  final int id;
   final String title;
-  final String subtitle;
-  final String price;
+  final String description;
+  final double price;
+  final String thumbnail;
+  final List<String> images;
+  final double rating;
+  final String brand;
 
   Watchcardmodel({
-    required this.image,
+    required this.id,
     required this.title,
-    required this.subtitle,
+    required this.description,
     required this.price,
+    required this.thumbnail,
+    required this.images,
+    required this.rating,
+    required this.brand,
   });
+
+  factory Watchcardmodel.fromJson(Map<String, dynamic> json) {
+    return Watchcardmodel(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      price: (json['price'] as num).toDouble(),
+      thumbnail: json['thumbnail'],
+      images: List<String>.from(json['images']),
+      rating: (json['rating'] as num).toDouble(),
+      brand: json['brand'],
+    );
+  }
 }
-
-List<Watchcardmodel> watchItem = [
-  Watchcardmodel(
-    image: "assets/images/applewatchh.png",
-    title: "Apple Watch ",
-    subtitle: "Ultra 2 ",
-    price: "\$ 999",
-  ),
-
-  Watchcardmodel(
-    image: "assets/images/samsongwatch.png",
-    title: "Samsung Watch  ",
-    subtitle: "Ganeration 5 ",
-    price: "\$ 899",
-  ),
-
-  Watchcardmodel(
-    image: "assets/images/FOSSIL.png",
-    title: "Rolex Watch  ",
-    subtitle: "Ganeration 5 ",
-    price: "\$ 899",
-  ),
-  Watchcardmodel(
-    image: "assets/images/Bremont.png",
-    title: "Casio Watch  ",
-    subtitle: "Ganeration 5 ",
-    price: "\$ 899",
-  ),
-  Watchcardmodel(
-    image: "assets/images/TommyHilfigerDecker.png",
-    title: "Casio Watch  ",
-    subtitle: "Ganeration 5 ",
-    price: "\$ 899",
-  ),
-  Watchcardmodel(
-    image: "assets/images/TOMMYWILFISED.png",
-    title: "Casio Watch  ",
-    subtitle: "Ganeration 5 ",
-    price: "\$ 899",
-  ),
-  Watchcardmodel(
-    image: "assets/images/ZurichMauriacSwiss.png",
-    title: "Casio Watch  ",
-    subtitle: "Ganeration 5 ",
-    price: "\$ 899",
-  ),
-];
