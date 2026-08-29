@@ -1,16 +1,66 @@
-# watch_app
+# ⌚ Watch Store App
 
-A new Flutter project.
+A modern **Watch Store E-Commerce App** built with **Flutter & Dart**, based on a Figma UI design.
 
-## Getting Started
+The project was initially developed as a Flutter application and later revisited with an **AI-assisted code review and improvement process** to enhance code quality, state management, responsiveness, and overall maintainability.
 
-This project is a starting point for a Flutter application.
+## ✨ Features
 
-A few resources to get you started if this is your first Flutter project:
+* 🏠 Browse watches and categories
+* 🔎 Search and filter products
+* ⌚ Product details with Modal Bottom Sheet
+* ❤️ Add/remove favorites
+* 🛒 Add products to cart and manage quantities
+* 💰 Calculate cart total
+* 📱 Responsive UI
+* 🌐 REST API integration
+* ⚠️ Error handling and local fallback data
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 🛠️ Tech Stack
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* Flutter & Dart
+* Provider
+* REST API
+* DummyJSON
+* Flutter ScreenUtil
+* Figma
+* Git & GitHub
+
+## 🤖 AI-Assisted Code Review
+
+The project was revisited and reviewed with the help of AI to improve:
+
+* Code structure and readability
+* Provider state management
+* Responsive UI
+* Error handling
+* Reusable widgets
+* Flutter best practices
+* UI consistency with the Figma design
+
+The goal was to **improve the existing project rather than rebuild it from scratch**.
+
+## 🎨 Design
+
+[Figma Design](https://www.figma.com/design/g3TOBAs43wNcq70lWzbzKM/E-Commerce-Watch-Store-App-Ui--Community-?node-id=3-23&p=f&t=f84oRdS2wcivNDCD-0)
+
+## 🎥 Demo
+
+*Add your app demo video or screenshots here.*
+
+## 🚀 Getting Started
+
+```bash
+git clone YOUR_GITHUB_REPOSITORY_URL
+cd watch_store
+flutter pub get
+flutter run
+```
+
+## 👩‍💻 Author
+
+**Shahd Ahmed**
+
+Flutter Developer & Coding Instructor
+
+⭐ Feel free to explore the project and share your feedback!

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:watch_app/constants/app_colors.dart';
 import 'package:watch_app/models/watchcardmodel.dart';
 import 'package:watch_app/providers/watch_provider.dart';
-import 'package:watch_app/widgets/custom_container_color.dart';
+import 'package:watch_app/widgets/product_details_bottom_sheet.dart';
 
 class DetailedProductPage extends StatefulWidget {
   const DetailedProductPage({super.key, required this.watch});
@@ -17,21 +17,25 @@ class DetailedProductPage extends StatefulWidget {
 }
 
 class _DetailedProductPageState extends State<DetailedProductPage> {
-  int _selectedColorIndex = 0;
-
-  Widget _buildWatchImage(String path) {
+  Widget _buildWatchImage(String path, {double height = 280}) {
     if (path.startsWith('assets/')) {
       return Image.asset(
         path,
+        height: height.h,
         fit: BoxFit.contain,
         errorBuilder: (_, __, ___) => Icon(Icons.watch_outlined, size: 120.w, color: Colors.grey),
       );
     }
     return Image.network(
       path,
+      height: height.h,
       fit: BoxFit.contain,
       errorBuilder: (_, __, ___) => Icon(Icons.image_not_supported, size: 120.w, color: Colors.grey),
     );
+  }
+
+  void _openDetailsBottomSheet(BuildContext context) {
+    ProductDetailsBottomSheet.show(context, widget.watch);
   }
 
   @override
@@ -63,173 +67,49 @@ class _DetailedProductPageState extends State<DetailedProductPage> {
         child: Column(
           children: [
             Expanded(
-              flex: 4,
-              child: Container(
-                padding: EdgeInsets.all(20.w),
-                alignment: Alignment.center,
-                child: Hero(
-                  tag: 'watch_${widget.watch.id}',
-                  child: _buildWatchImage(widget.watch.thumbnail),
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 6,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppColors.lightGreyBg,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(25.r),
-                    topRight: Radius.circular(25.r),
-                  ),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: AppColors.cardShadow,
-                      blurRadius: 15,
-                      offset: Offset(0, -4),
-                    ),
-                  ],
-                ),
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+              child: InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onTap: () => _openDetailsBottomSheet(context),
+                child: Center(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.watch.title,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                SizedBox(height: 4.h),
-                                Text(
-                                  widget.watch.brand,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.greyText,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 12.w),
-                          Text(
-                            "\$${widget.watch.price.toStringAsFixed(2)}",
-                            style: GoogleFonts.poppins(
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primaryOrange,
-                            ),
-                          ),
-                        ],
+                      Hero(
+                        tag: 'watch_${widget.watch.id}',
+                        child: _buildWatchImage(widget.watch.thumbnail, height: 300),
                       ),
-                      SizedBox(height: 16.h),
-                      Text(
-                        "Colors",
-                        style: GoogleFonts.poppins(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black87,
+                      SizedBox(height: 20.h),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                        decoration: BoxDecoration(
+                          color: AppColors.lightGreyBg,
+                          borderRadius: BorderRadius.circular(20.r),
+                          border: Border.all(color: AppColors.borderColor.withValues(alpha: 0.5)),
                         ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Row(
-                        children: [
-                          CustomContainerColor(
-                            text: "Green/grey",
-                            colors: const [Color(0xFF225924), Color(0xFFE1DFDF)],
-                            isSelected: _selectedColorIndex == 0,
-                            onTap: () => setState(() => _selectedColorIndex = 0),
-                          ),
-                          SizedBox(width: 8.w),
-                          CustomContainerColor(
-                            text: "Navy/black",
-                            colors: const [Color(0xFF0904E7), Color(0xFF0B0A0A)],
-                            isSelected: _selectedColorIndex == 1,
-                            onTap: () => setState(() => _selectedColorIndex = 1),
-                          ),
-                          SizedBox(width: 8.w),
-                          CustomContainerColor(
-                            text: "Silver/grey",
-                            colors: const [Color(0xFF7B7A9D), Color(0xFF7B7A9D)],
-                            isSelected: _selectedColorIndex == 2,
-                            onTap: () => setState(() => _selectedColorIndex = 2),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16.h),
-                      Text(
-                        "Details",
-                        style: GoogleFonts.poppins(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primaryOrange,
-                        ),
-                      ),
-                      SizedBox(height: 6.h),
-                      Text(
-                        widget.watch.description.isNotEmpty
-                            ? widget.watch.description
-                            : "Premium quality crafted timepiece with durable materials and precision movement.",
-                        style: GoogleFonts.poppins(
-                          fontSize: 12.sp,
-                          color: Colors.grey[700],
-                          height: 1.4,
-                        ),
-                      ),
-                      SizedBox(height: 24.h),
-                      Center(
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 48.h,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              context.read<WatchProvider>().addToCart(widget.watch);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text("${widget.watch.title} added to cart!"),
-                                  duration: const Duration(seconds: 2),
-                                  backgroundColor: AppColors.primaryOrange,
-                                  behavior: SnackBarBehavior.floating,
-                                ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryOrange,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                              elevation: 2,
-                            ),
-                            child: Text(
-                              "Add to cart",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
+                        // child: Row(
+                        //   mainAxisSize: MainAxisSize.min,
+                        //   children: [
+                        //     Icon(Icons.touch_app_outlined, size: 18.sp, color: AppColors.primaryOrange),
+                        //     SizedBox(width: 8.w),
+                        //     Text(
+                        //       "Tap image for details",
+                        //       style: GoogleFonts.poppins(
+                        //         fontSize: 13.sp,
+                        //         fontWeight: FontWeight.w600,
+                        //         color: Colors.black87,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
+            const _ColoredContainerDots(),
+            SizedBox(height: 24.h),
           ],
         ),
       ),
@@ -237,5 +117,45 @@ class _DetailedProductPageState extends State<DetailedProductPage> {
   }
 }
 
+class _ColoredContainerDots extends StatelessWidget {
+  const _ColoredContainerDots();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 10.w,
+          height: 10.h,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.black87,
+          ),
+        ),
+        SizedBox(width: 8.w),
+        Container(
+          width: 10.w,
+          height: 10.h,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.primaryOrange,
+          ),
+        ),
+        SizedBox(width: 8.w),
+        Container(
+          width: 10.w,
+          height: 10.h,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.grey,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 /// Backwards-compatibility class alias for Detailedprodect
 typedef Detailedprodect = DetailedProductPage;
+
