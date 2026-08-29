@@ -1,4 +1,4 @@
-class Watchcardmodel {
+class WatchCardModel {
   final int id;
   final String title;
   final String description;
@@ -8,7 +8,7 @@ class Watchcardmodel {
   final double rating;
   final String brand;
 
-  Watchcardmodel({
+  const WatchCardModel({
     required this.id,
     required this.title,
     required this.description,
@@ -19,16 +19,21 @@ class Watchcardmodel {
     required this.brand,
   });
 
-  factory Watchcardmodel.fromJson(Map<String, dynamic> json) {
-    return Watchcardmodel(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      price: (json['price'] as num).toDouble(),
-      thumbnail: json['thumbnail'],
-      images: List<String>.from(json['images']),
-      rating: (json['rating'] as num).toDouble(),
-      brand: json['brand'],
+  factory WatchCardModel.fromJson(Map<String, dynamic> json) {
+    return WatchCardModel(
+      id: json['id'] is int ? json['id'] : int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      title: json['title']?.toString() ?? 'Watch',
+      description: json['description']?.toString() ?? '',
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      thumbnail: json['thumbnail']?.toString() ?? '',
+      images: json['images'] is List
+          ? (json['images'] as List).map((e) => e.toString()).toList()
+          : <String>[],
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
+      brand: json['brand']?.toString() ?? 'Watch Brand',
     );
   }
 }
+
+/// Backwards-compatibility alias for previous naming conventions.
+typedef Watchcardmodel = WatchCardModel;

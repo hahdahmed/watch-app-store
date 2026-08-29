@@ -1,6 +1,6 @@
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:watch_app/constants/app_colors.dart';
 import 'package:watch_app/pages/home_page.dart';
 
 class SplashPage extends StatefulWidget {
@@ -10,8 +10,7 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage>
-    with SingleTickerProviderStateMixin {
+class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacity;
   late Animation<double> _scale;
@@ -44,18 +43,26 @@ class _SplashPageState extends State<SplashPage>
       begin: -0.05,
       end: 0.05,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    
     _controller.forward();
 
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         Future.delayed(const Duration(seconds: 1), () {
+          if (!mounted) return;
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (c) => HomePage()),
+            MaterialPageRoute(builder: (_) => const HomePage()),
           );
         });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -66,7 +73,7 @@ class _SplashPageState extends State<SplashPage>
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xff0D1A1C), Color(0xff0E0C0E)],
+            colors: [AppColors.darkSplashStart, AppColors.darkSplashEnd],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

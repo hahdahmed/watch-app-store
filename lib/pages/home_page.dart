@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:watch_app/pages/detailedprodect.dart';
-import 'package:watch_app/widgets/CustomCard.dart';
 import 'package:provider/provider.dart';
+import 'package:watch_app/constants/app_colors.dart';
+import 'package:watch_app/pages/detailed_product_page.dart';
 import 'package:watch_app/providers/watch_provider.dart';
+import 'package:watch_app/widgets/custom_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,168 +14,188 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-int selectIndex = -1;
-
-List<String> WatchesType = ["Smart watch", "Casio", "Tissot", "Seiko"];
-
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
 
     Future.microtask(() {
-      Provider.of<WatchProvider>(context, listen: false).getWatches();
+      if (!mounted) return;
+      context.read<WatchProvider>().getWatches();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<WatchProvider>(context);
+    final provider = context.watch<WatchProvider>();
+    final watches = provider.filteredWatches;
 
     return Scaffold(
-      appBar: AppBarWidget(),
-
-      body: Column(
-        children: [
-          SizedBox(height: 10.h),
-
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Text(
-              "Find your suitable\n watch now.",
-              style: GoogleFonts.raleway(
-                textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 36),
+      backgroundColor: Colors.white,
+      appBar: const _HomeAppBar(),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 10.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Text(
+                "Find your suitable\n watch now.",
+                style: GoogleFonts.raleway(
+                  fontSize: 28.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                  height: 1.2,
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 10.h),
-          Padding(
-            padding: const EdgeInsets.only(left: 40),
-            child: SizedBox(
-              height: 30.h,
+            SizedBox(height: 14.h),
+            SizedBox(
+              height: 32.h,
               child: ListView.separated(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
                 scrollDirection: Axis.horizontal,
+                itemCount: provider.categories.length,
+                separatorBuilder: (_, __) => SizedBox(width: 16.w),
                 itemBuilder: (context, index) {
-                  bool isSelect = index == selectIndex;
+                  final isSelected = index == provider.selectedCategoryIndex;
                   return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectIndex = index;
-                      });
-                    },
+                    onTap: () => provider.selectCategory(index),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      // mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                          WatchesType[index],
+                          provider.categories[index],
                           style: GoogleFonts.raleway(
-                            textStyle: TextStyle(
-                              fontSize: 18,
-                              color: isSelect
-                                  ? Color(0xffF24E1E)
-                                  : Color(0xff9095A6),
-                            ),
+                            fontSize: 15.sp,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                            color: isSelected ? AppColors.primaryOrange : AppColors.greyText,
                           ),
                         ),
-
-                        if (isSelect)
+                        SizedBox(height: 2.h),
+                        if (isSelected)
                           Container(
-                            width: 38.w,
-                            height: 1.6.h,
-                            color: Color(0xffF24E1E),
+                            width: 30.w,
+                            height: 2.h,
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryOrange,
+                              borderRadius: BorderRadius.circular(1.r),
+                            ),
                           ),
                       ],
                     ),
                   );
                 },
-                separatorBuilder: (_, __) => SizedBox(width: 20.w),
-                itemCount: WatchesType.length,
               ),
             ),
-          ),
-
-          Expanded(
-            child: provider.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : provider.errorMessage != null
-                ? Center(child: Text(provider.errorMessage!))
-                : Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.90,
+            SizedBox(height: 12.h),
+            Expanded(
+              child: provider.isLoading
+                  ? const Center(child: CircularProgressIndicator(color: AppColors.primaryOrange))
+                  : provider.errorMessage != null && watches.isEmpty
+                      ? Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.w),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  provider.errorMessage!,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 14.sp, color: Colors.red),
+                                ),
+                                SizedBox(height: 8.h),
+                                ElevatedButton(
+                                  onPressed: () => provider.getWatches(),
+                                  child: const Text("Retry"),
+                                ),
+                              ],
+                            ),
                           ),
-                      itemCount: provider.watches.length,
-                      itemBuilder: (context, index) {
-                        final item = provider.watches[index];
-
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => Detailedprodect(watch: item),
+                        )
+                      : watches.isEmpty
+                          ? Center(
+                              child: Text(
+                                "No watches found",
+                                style: GoogleFonts.inter(fontSize: 14.sp, color: AppColors.greyText),
                               ),
-                            );
-                          },
-                          child: Customcard(
-                            image: item.thumbnail,
-                            title: item.title,
-                            brand: item.brand,
-                            price: "\$${item.price}",
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-          ),
-        ],
+                            )
+                          : Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16.w),
+                              child: GridView.builder(
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 0.72,
+                                  crossAxisSpacing: 12.w,
+                                  mainAxisSpacing: 12.h,
+                                ),
+                                itemCount: watches.length,
+                                itemBuilder: (context, index) {
+                                  final item = watches[index];
+                                  return CustomCard(
+                                    watch: item,
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => DetailedProductPage(watch: item),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
-  const AppBarWidget({super.key});
+class _HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const _HomeAppBar();
+
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      titleSpacing: 0,
       title: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
-
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(Icons.menu),
-
-            SizedBox(width: 50.w),
+            Icon(Icons.menu, color: Colors.black87, size: 24.sp),
+            SizedBox(width: 12.w),
             Expanded(
               child: Container(
-                height: 25.h,
+                height: 36.h,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25.r),
+                  borderRadius: BorderRadius.circular(20.r),
                   border: Border.all(
-                    color: Color.fromARGB(209, 217, 217, 217),
+                    color: AppColors.borderColor,
                     width: 1.w,
                   ),
+                  color: Colors.grey[50],
                 ),
                 child: TextField(
+                  onChanged: (val) => context.read<WatchProvider>().setSearchQuery(val),
                   decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search_outlined, size: 20.w),
+                    prefixIcon: Icon(Icons.search_outlined, size: 18.sp, color: AppColors.greyText),
                     hintText: "Search Product",
-
                     hintStyle: GoogleFonts.inter(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey,
+                      color: AppColors.greyText,
                     ),
                     border: InputBorder.none,
+                    isDense: true,
                     contentPadding: EdgeInsets.symmetric(vertical: 8.h),
                   ),
                 ),
@@ -186,44 +207,3 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
-
-
-
-
-
-          // Expanded(
-          //   child: Padding(
-          //     padding: const EdgeInsets.all(8.0),
-          //     child: GridView.builder(
-          //       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          //         crossAxisCount: 2,
-          //         childAspectRatio: 0.90,
-          //       ),
-          //       itemCount: watchItem.length,
-          //       itemBuilder: (context, index) {
-          //         final item = watchItem[index];
-          //         return GestureDetector(
-          //           onTap: () {
-          //             Navigator.push(
-          //               context,
-          //               MaterialPageRoute(
-          //                 builder: (c) => Detailedprodect(
-          //                   image: item.image,
-          //                   title: item.title,
-          //                   price: item.price,
-          //                 ),
-          //               ),
-          //             );
-          //           },
-          //           child: Customcard(
-          //             image: item.image,
-          //             title: item.title,
-          //             brand: item.subtitle,
-          //             price: item.price,
-          //           ),
-          //         );
-          //       },
-          //     ),
-          //   ),
-          // ),
-        
