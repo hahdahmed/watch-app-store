@@ -31,8 +31,8 @@ The project was initially developed as a Flutter application and later revisited
 The project was revisited and reviewed with the help of AI to improve:
 
 
-🛒 Improved the shopping experience.
-🧩 Cleaned up and improved the code structure.
+* 🛒 Improved the shopping experience.
+* 🧩 Cleaned up and improved the code structure.
 
 The goal was to **improve the existing project rather than rebuild it from scratch**.
 
